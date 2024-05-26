@@ -1,0 +1,435 @@
+@startuml
+class com.example.calendar.DTO.TodoOutDto {
+- String title
+- String description
+- String todoStatus
+- String startTime
+- String endTime
+- long id
+}
+
+class com.example.calendar.Entity.Events {
+- long eventId
+- String title
+- LocalDateTime startTime
+- LocalDateTime endTime
+- boolean reminder
+- LocalDateTime reminderDate
+- User user
+- List<EventInvitation> eventInvitationSet
++ LocalDateTime getEndTime()
++ void setEndTime(LocalDateTime)
++ List<EventInvitation> getEventInvitationSet()
++ void setEventInvitationSet(List<EventInvitation>)
++ long getEventId()
++ void setEventId(long)
++ String getTitle()
++ void setTitle(String)
++ LocalDateTime getStartTime()
++ void setStartTime(LocalDateTime)
++ LocalDateTime getEndDate()
++ void setEndDate(LocalDateTime)
++ User getUser()
++ void setUser(User)
++ boolean isReminder()
++ void setReminder(boolean)
++ LocalDateTime getReminderDate()
++ void setReminderDate(LocalDateTime)
+}
+
+
+enum com.example.calendar.Entity.Role {
++  ROLE_ADMIN
++  ROLE_USER
+}
+
+interface com.example.calendar.Repository.TodosRepository {
+~ List<Todo> findByUserId(Long)
+}
+
+interface com.example.calendar.Repository.EventInvitationRepository {
+}
+class com.example.calendar.DTO.EventDTO {
+- String title
+- String startTime
+- String endTime
+- boolean reminder
+- String reminderDate
+}
+
+class com.example.calendar.Service.EventsService {
+- EventsRepository eventsRepository
+- UserRepository userRepository
+- EventInvitationRepository eventInvitationRepository
++ Events saveEvent(EventDTO,Long)
++ Events addFriendsToEvent(Long,List<Long>)
++ List<Events> getEvents()
++ String deleteEvent(long)
++ List<Events> getEventsByUserId(Long)
++ Events updateEvents(long,EventDTO)
++ Events inviteFriendsToEvent(Long,List<Long>)
+}
+
+
+class com.example.calendar.Service.ReminderService {
+- BirthdayRepository birthdayRepository
+- EventsRepository eventsRepository
+- JavaMailSender mailSender
++ void reminderMailBirthday()
++ void reminderMailEvent()
+- void sendEmail(String,String,String)
+}
+
+
+class com.example.calendar.Controller.EventsController {
+- EventsService eventsService
+- UserService userService
++ ResponseEntity<Events> saveEvent(EventDTO)
++ ResponseEntity<String> inviteFriendsToEvent(Long,List<Long>)
++ ResponseEntity<?> getEventsByUser()
++ ResponseEntity<String> deleteEvent(long)
++ ResponseEntity<Events> updateEvent(long,EventDTO)
+}
+
+
+class com.example.calendar.Entity.Birthday {
+- Long id
+- LocalDate date
+- String title
+- User user
+- LocalDateTime reminderDate
++ Long getId()
++ String getTitle()
++ void setTitle(String)
++ LocalDateTime getReminderDate()
++ void setReminderDate(LocalDateTime)
++ void setId(Long)
++ LocalDate getDate()
++ void setDate(LocalDate)
++ User getUser()
++ void setUser(User)
+}
+
+
+interface com.example.calendar.Repository.BirthdayRepository {
+~ List<Birthday> findByUserId(Long)
+~ List<Birthday> findByDate(LocalDate)
+}
+
+class com.example.calendar.DTO.LoginDTO {
+- String username
+- String password
+}
+
+class com.example.calendar.Entity.Friendship {
+- Long idFriendship
+- User friendRequester
+- User friendReceiver
+- FriendshipStatus friendshipStatus
++ Long getIdFriendship()
++ void setIdFriendship(Long)
++ User getFriendRequester()
++ void setFriendRequester(User)
++ User getFriendReceiver()
++ void setFriendReceiver(User)
++ FriendshipStatus getFriendshipStatus()
++ void setFriendshipStatus(FriendshipStatus)
+}
+
+
+class com.example.calendar.Controller.AuthController {
+- UserService userService
++ ResponseEntity<?> createUser(SignUpDTO)
++ ResponseEntity<String> loginUser(LoginDTO)
++ ResponseEntity<String> logoutUser()
++ ResponseEntity<?> loggedinUser()
++ ResponseEntity<?> loggedinUserRole()
++ ResponseEntity<?> getUsers()
++ ResponseEntity<Long> getCurrentUserId()
++ ResponseEntity<String> deleteUser(long)
+}
+
+
+class com.example.calendar.Entity.Todo {
+- Long todoId
+- String title
+- String description
+- TodoStatus todoStatus
+- LocalDateTime startTime
+- LocalDateTime endTime
+- User user
++ Long getTodoId()
++ void setTodoId(Long)
++ String getTitle()
++ void setTitle(String)
++ String getDescription()
++ void setDescription(String)
++ TodoStatus getTodoStatus()
++ void setTodoStatus(TodoStatus)
++ LocalDateTime getStartTime()
++ void setStartTime(LocalDateTime)
++ LocalDateTime getEndTime()
++ void setEndTime(LocalDateTime)
++ User getUser()
++ void setUser(User)
+}
+
+
+enum com.example.calendar.Entity.FriendshipStatus {
++  PENDING
++  ACCEPTED
++  DECLINED
+}
+
+class com.example.calendar.DTO.UserDetailsDTO {
+- String username
+- String email
+- long friendCount
+- String firstName
+- String lastName
+- long id
+}
+
+class com.example.calendar.CalendarApplication {
++ {static} void main(String[])
+}
+
+class com.example.calendar.Service.BirthdaysService {
+- BirthdayRepository birthdayRepository
+- UserRepository userRepository
++ Birthday saveBirthday(BirthdayDTO,Long)
++ List<Birthday> getBirthdays()
++ String deleteBirthday(long)
++ List<Birthday> getBirthdaysByUserId(Long)
++ List<Birthday> getBirthdaysByDate(LocalDate)
++ Birthday updateBirthday(long,BirthdayDTO)
+}
+
+
+class com.example.calendar.DTO.BirthdayOutDTO {
+- String date
+- String title
+- long id
+}
+
+class com.example.calendar.Service.UserDetailsServiceImpl {
+- UserRepository userRepository
++ UserDetails loadUserByUsername(String)
+}
+
+
+class com.example.calendar.Entity.User {
+- Long id
+- String username
+- String email
+- String password
+- String lastName
+- String firstName
+- Role role
+- long friendCount
+- Set<Friendship> requestedFriends
+- Set<Friendship> receivedFriends
+- Set<Events> events
+- Set<Birthday> birthdays
+- Set<Todo> todos
+- List<EventInvitation> invitations
++ List<EventInvitation> getInvitations()
++ void setInvitations(List<EventInvitation>)
++ Set<Birthday> getBirthdays()
++ void setBirthdays(Set<Birthday>)
++ Set<Todo> getTodos()
++ void setTodos(Set<Todo>)
++ Set<Events> getEvents()
++ void setEvents(Set<Events>)
++ long getFriendCount()
++ void setFriendCount(long)
++ Set<Friendship> getRequestedFriends()
++ void setRequestedFriends(Set<Friendship>)
++ Set<Friendship> getReceivedFriends()
++ void setReceivedFriends(Set<Friendship>)
++ Long getId()
++ void setId(Long)
++ String getEmail()
++ void setEmail(String)
++ String getUsername()
++ void setUsername(String)
++ String getPassword()
++ void setPassword(String)
++ String getLastName()
++ void setLastName(String)
++ String getFirstName()
++ void setFirstName(String)
++ Role getRole()
++ void setRole(Role)
+}
+
+
+class com.example.calendar.DTO.BirthdayDTO {
+- String date
+- String title
+}
+
+class com.example.calendar.Controller.BirthdaysController {
+- BirthdaysService birthdaysService
+- UserService userService
++ ResponseEntity<Birthday> saveBirthday(BirthdayDTO)
++ ResponseEntity<?> getBirthdaysByUser()
++ ResponseEntity<String> deleteBirthday(long)
++ ResponseEntity<Birthday> updateBirthday(long,BirthdayDTO)
++ ResponseEntity<?> getBirthdaysByDate(String)
+}
+
+
+class com.example.calendar.DTO.TodoDTO {
+- String title
+- String description
+- String todoStatus
+- String startTime
+- String endTime
+}
+
+interface com.example.calendar.Repository.UserRepository {
+~ Optional<User> findByUsername(String)
+~ Optional<User> findByEmail(String)
+~ Optional<User> findById(Long)
+~ Boolean existsByUsername(String)
+~ Boolean existsByEmail(String)
+}
+
+interface com.example.calendar.Repository.FriendshipRepository {
+~ Optional<Friendship> findById(Long)
+~ List<Friendship> findByFriendReceiverIdAndFriendshipStatus(Long,FriendshipStatus)
+~ List<Friendship> findByFriendRequesterIdAndFriendshipStatus(Long,FriendshipStatus)
+~ List<Friendship> findFriendshipsByUserIdAndStatus(Long,FriendshipStatus,FriendshipStatus)
+~ List<Friendship> findByFriendReceiverIdAndFriendshipStatusOrFriendRequesterIdAndFriendshipStatus(Long,FriendshipStatus,Long,FriendshipStatus)
+~ Friendship findByFriendRequesterIdAndFriendReceiverId(Long,Long)
+}
+
+class com.example.calendar.Controller.TodosController {
+- TodosService todosService
+- UserService userService
++ ResponseEntity<Todo> saveTodo(TodoDTO)
++ ResponseEntity<List<Todo>> getTodos()
++ ResponseEntity<String> deleteTodo(Long)
++ ResponseEntity<Todo> updateTodo(long,TodoDTO)
+}
+
+
+class com.example.calendar.Controller.FriendshipController {
+- FriendshipService friendshipService
+- UserService userService
++ ResponseEntity<String> sendFriendRequest(Long)
++ ResponseEntity<String> acceptFriendRequest(Long,Long)
++ ResponseEntity<String> declineFriendRequest(Long,Long)
++ ResponseEntity<List<UserDetailsDTO>> getPendingFriendRequests()
++ ResponseEntity<List<UserDetailsDTO>> getAcceptedFriends()
++ ResponseEntity<List<UserDetailsDTO>> getNonFriendsAndPending()
+}
+
+
+enum com.example.calendar.Entity.TodoStatus {
++  TODO
++  IN_PROGRESS
++  COMPLETE
+}
+
+class com.example.calendar.Service.FriendshipService {
+- FriendshipRepository friendshipRepository
+- UserRepository userRepository
++ void sendFriendRequest(Long,Long)
++ void acceptFriendRequest(Long,Long)
++ void declineFriendRequest(Long,Long)
++ List<UserDetailsDTO> findPendingFriendRequestsByUserId(Long)
++ List<UserDetailsDTO> findAcceptedFriendsByUserId(Long)
+- List<UserDetailsDTO> extractUserDetailsDTOs(List<Friendship>,Long)
++ List<UserDetailsDTO> getNonFriendsAndPending(Long)
+}
+
+
+class com.example.calendar.Service.UserService {
+- UserRepository userRepository
+- PasswordEncoder passwordEncoder
+- AuthenticationManager authenticationManager
+- long currentId
+- String currentRole
++ ResponseEntity<?> createUser(SignUpDTO)
++ ResponseEntity<String> authenticate(String,String)
++ ResponseEntity<String> logout()
++ User findUserByUsername(String)
++ Long findLoggedInUserId()
++ String findLoggedInUserRole()
++ List<User> getUsers()
++ String deleteUser(long)
+}
+
+
+class com.example.calendar.Service.TodosService {
+- TodosRepository todosRepository
+- UserRepository userRepository
++ Todo saveTodo(TodoDTO,Long)
++ List<Todo> getTodos()
++ List<Todo> getTodosByUserId(Long)
++ String deleteTodo(Long)
++ Todo updateTodo(long,TodoDTO)
+}
+
+
+class com.example.calendar.Config.SecurityConfig {
+- UserDetailsServiceImpl userDetailsService
++ {static} PasswordEncoder passwordEncoder()
++ AuthenticationManager authenticationManager(AuthenticationConfiguration)
+~ SecurityFilterChain securityFilterChain(HttpSecurity)
+}
+
+
+interface com.example.calendar.Repository.EventsRepository {
+~ List<Events> findByUserId(Long)
+~ Optional<Events> findByEventId(Long)
+}
+
+class com.example.calendar.DTO.FriendDTO {
+- Long id
+- String username
+}
+
+class com.example.calendar.DTO.SignUpDTO {
+- String username
+- String email
+- String password
+- String lastName
+- String firstName
+- String role
+}
+
+class com.example.calendar.DTO.EventOutDTO {
+- String title
+- String startTime
+- String endTime
+- boolean reminder
+- String reminderDate
+- long id
+}
+
+class com.example.calendar.Entity.EventInvitation {
+- Long id
+- User user
+- Events events
++ Long getId()
++ void setId(Long)
++ User getUser()
++ void setUser(User)
++ Events getEvents()
++ void setEvents(Events)
+}
+
+
+
+
+org.springframework.data.jpa.repository.JpaRepository <|-- com.example.calendar.Repository.TodosRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- com.example.calendar.Repository.EventInvitationRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- com.example.calendar.Repository.BirthdayRepository
+org.springframework.security.core.userdetails.UserDetailsService <|.. com.example.calendar.Service.UserDetailsServiceImpl
+org.springframework.data.jpa.repository.JpaRepository <|-- com.example.calendar.Repository.UserRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- com.example.calendar.Repository.FriendshipRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- com.example.calendar.Repository.EventsRepository
+@enduml
